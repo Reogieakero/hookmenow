@@ -1,0 +1,113 @@
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Animated, Pressable, Dimensions } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import LottieView from 'lottie-react-native';
+import { useTypingAnimation } from '../hooks/useTypingAnimation';
+
+const { width, height: screenHeight } = Dimensions.get('window');
+
+export default function HomeScreen({ onStart, isMuted, onToggleAudio }) {
+  const { line1, line2 } = useTypingAnimation("HOOK ME", "NOW", 180);
+  const cursorOpacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(cursorOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
+        Animated.timing(cursorOpacity, { toValue: 0, duration: 500, useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.nav}>
+        <View />
+        <Pressable style={styles.iconButton} onPress={onToggleAudio}>
+          <Ionicons 
+            name={isMuted ? "volume-mute" : "volume-high"} 
+            size={20} 
+            color={isMuted ? "#71717a" : "#fafafa"} 
+          />
+        </Pressable>
+      </View>
+
+      <View style={styles.main}>
+        <Text style={styles.logoEmoji}>🎣</Text>
+        <View style={styles.titleContainer}>
+          <View style={styles.lineHeightFix}>
+             <Text style={styles.titleLine}>{line1}</Text>
+             {line2 === '' && line1 !== '' && (
+               <Animated.View style={[styles.cursor, { opacity: cursorOpacity }]} />
+             )}
+          </View>
+          <View style={styles.row}>
+            <Text style={[styles.titleLine, styles.highlightText]}>{line2}</Text>
+            {line2 !== '' && (
+              <Animated.View style={[styles.cursor, { opacity: cursorOpacity }]} />
+            )}
+          </View>
+        </View>
+        <Text style={styles.description}>
+          A high-stakes one-button survival protocol.{"\n"}
+          Time your strike. Avoid the apex predator.
+        </Text>
+      </View>
+
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.primaryButton} onPress={onStart} activeOpacity={0.8}>
+          <Text style={styles.primaryButtonText}>Initialize Sequence</Text>
+          <Ionicons name="arrow-forward" size={16} color="#09090b" />
+        </TouchableOpacity>
+        <View style={styles.legalContainer}>
+            <Text style={styles.legalText}>© 2026 DEEP SEA OPERATIONS</Text>
+        </View>
+      </View>
+
+      <View style={styles.waveContainer} pointerEvents="none">
+        <LottieView
+          autoPlay
+          loop
+          style={styles.lottieWaves}
+          source={require('../../assets/gifs/sea waves.json')} 
+          speed={0.3}
+        />
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, paddingHorizontal: 28 },
+  nav: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 24, zIndex: 20 },
+  iconButton: { padding: 10, backgroundColor: 'rgba(24, 24, 27, 0.8)', borderRadius: 10, borderWidth: 1, borderColor: '#27272a' },
+  main: { flex: 1, justifyContent: 'center', alignItems: 'flex-start', zIndex: 20 },
+  logoEmoji: { fontSize: 80, marginBottom: 24 },
+  titleContainer: { marginBottom: 24, minHeight: 120 },
+  lineHeightFix: { flexDirection: 'row', alignItems: 'center', height: 56 },
+  titleLine: { fontSize: 56, fontWeight: '900', color: '#fafafa', lineHeight: 56, letterSpacing: -2 },
+  row: { flexDirection: 'row', alignItems: 'center', height: 56 },
+  highlightText: { color: '#FFECD1' },
+  cursor: { width: 6, height: 44, backgroundColor: '#fafafa', marginLeft: 10 },
+  description: { fontSize: 16, color: '#a1a1aa', lineHeight: 24, fontWeight: '400', maxWidth: '90%' },
+  footer: { paddingBottom: 60, gap: 24, zIndex: 20 },
+  primaryButton: { backgroundColor: '#fafafa', paddingVertical: 18, borderRadius: 12, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 8 },
+  primaryButtonText: { color: '#09090b', fontSize: 16, fontWeight: '600' },
+  legalContainer: { alignItems: 'center' },
+  legalText: { color: '#3f3f46', fontSize: 10, letterSpacing: 1, fontWeight: '600' },
+  waveContainer: {
+    position: 'absolute',
+    bottom: -290, 
+    left: 0,
+    width: width,
+    height: screenHeight * 1.2, 
+    zIndex: 1,
+    opacity: 0.45,
+    justifyContent: 'flex-end', 
+  },
+  lottieWaves: { 
+    width: width, 
+    height: '100%',
+    transform: [{ scaleY: 1.2 }], 
+  },
+});
