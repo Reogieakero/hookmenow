@@ -7,7 +7,7 @@ import { useTypingAnimation } from '../hooks/useTypingAnimation';
 const { width, height: screenHeight } = Dimensions.get('window');
 
 export default function HomeScreen({ onStart, isMuted, onToggleAudio }) {
-  const { line1, line2 } = useTypingAnimation("HOOK ME", "NOW", 180);
+  const { line1, line2 } = useTypingAnimation("HOOK ME", "NOW", 300);
   const cursorOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -56,8 +56,7 @@ export default function HomeScreen({ onStart, isMuted, onToggleAudio }) {
 
       <View style={styles.footer}>
         <TouchableOpacity style={styles.primaryButton} onPress={onStart} activeOpacity={0.8}>
-          <Text style={styles.primaryButtonText}>Initialize Sequence</Text>
-          <Ionicons name="arrow-forward" size={16} color="#09090b" />
+          <Text style={styles.primaryButtonText}>Play now</Text>
         </TouchableOpacity>
         <View style={styles.legalContainer}>
             <Text style={styles.legalText}>© 2026 DEEP SEA OPERATIONS</Text>

@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import HomeScreen from './src/screens/HomeScreen';
+import GameScreen from './src/screens/GameScreen'; // Import the new screen
 import { useGameAudio } from './src/hooks/useAudio';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('HOME');
+  
+  // Existing music logic remains untouched
   const { isMuted, toggleMusic, forcePlay } = useGameAudio(require('./assets/sounds/game.mp3'));
 
   const handleStartGame = () => {
     forcePlay();
     setCurrentScreen('GAME');
+  };
+
+  const handleGoHome = () => {
+    setCurrentScreen('HOME');
   };
 
   return (
@@ -23,9 +30,7 @@ export default function App() {
             onToggleAudio={toggleMusic} 
           />
         ) : (
-          <View style={styles.gamePlaceholder}>
-            <Text style={{color: 'white'}}>GAME SCREEN COMING SOON</Text>
-          </View>
+          <GameScreen onBack={handleGoHome} />
         )}
       </SafeAreaView>
     </SafeAreaProvider>
@@ -37,9 +42,4 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#001524',
   },
-  gamePlaceholder: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
 });
