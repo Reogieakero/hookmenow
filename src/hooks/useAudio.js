@@ -2,24 +2,21 @@ import { useState, useEffect } from 'react';
 import { useAudioPlayer } from 'expo-audio';
 
 export const useGameAudio = (asset) => {
-  const [isMuted, setIsMuted] = useState(true);
-  
-  const player = useAudioPlayer(asset, {
-    shouldPlay: false,
-    loop: true, 
-  });
+  const [isMuted, setIsMuted] = useState(true); // Default to muted
+  const player = useAudioPlayer(asset);
 
   useEffect(() => {
     if (player) {
       player.loop = true;
+      // Ensure it is paused on initialization
+      player.pause(); 
     }
   }, [player]);
 
   const toggleMusic = () => {
     if (!player) return;
-
+    
     if (isMuted) {
-      player.loop = true; 
       player.play();
       setIsMuted(false);
     } else {
@@ -28,13 +25,11 @@ export const useGameAudio = (asset) => {
     }
   };
 
-  const forcePlay = () => {
-    if (player && !player.playing) {
-      player.loop = true;
+  const playEffect = () => {
+    if (player && !isMuted) {
       player.play();
-      setIsMuted(false);
     }
   };
 
-  return { isMuted, toggleMusic, forcePlay };
+  return { isMuted, toggleMusic, playEffect };
 };

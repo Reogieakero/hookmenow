@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import HomeScreen from './src/screens/HomeScreen';
-import GameScreen from './src/screens/GameScreen'; // Import the new screen
+import GameScreen from './src/screens/GameScreen';
 import { useGameAudio } from './src/hooks/useAudio';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('HOME');
   
-  // Existing music logic remains untouched
-  const { isMuted, toggleMusic, forcePlay } = useGameAudio(require('./assets/sounds/game.mp3'));
+  // Use the updated hook
+  const { isMuted, toggleMusic, playEffect } = useGameAudio(require('./assets/sounds/game.mp3'));
 
   const handleStartGame = () => {
-    forcePlay();
+    // We only play a sound effect if the user already enabled sound
+    playEffect(); 
     setCurrentScreen('GAME');
   };
 
