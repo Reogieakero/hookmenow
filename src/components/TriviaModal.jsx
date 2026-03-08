@@ -9,7 +9,7 @@ const TriviaModal = ({
   buttonText, 
   themeColor = '#4ade80', 
   isWin = false,
-  stats = null // Optional object: { score: 0, coins: 0 }
+  stats = null 
 }) => {
   const borderStyle = isWin ? styles.winBorder : { borderColor: themeColor };
   const titleStyle = isWin ? styles.winTitleText : { color: themeColor };
