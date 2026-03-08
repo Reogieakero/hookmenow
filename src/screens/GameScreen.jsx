@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Modal, Animated, Pressable, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Animated, Pressable, Dimensions } from 'react-native';
 import LottieView from 'lottie-react-native';
 import LevelSelector from '../components/LevelSelector';
 import ConfettiEffect from '../components/ConfettiEffect';
@@ -7,6 +7,7 @@ import MechanicsModal from '../components/MechanicsModal';
 import CatchDialogue from '../components/CatchDialogue';
 import GameHeader from '../components/GameHeader';
 import FloatingTriviaButton from '../components/FloatingTriviaButton';
+import TriviaModal from '../components/TriviaModal'; // New Import
 import { useGameLogic, LEVEL_CONFIGS } from '../hooks/useGameLogic';
 import { useScore } from '../hooks/useScore';
 
@@ -27,17 +28,8 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
   const floatAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
-  const { 
-    score, highScore, activeBackground,
-    handleCatchPoints, resetScore, saveHighScore, convertScoreToCoins 
-  } = useScore();
-
-  const {
-    currentLevel, catchCount, availableNumbers,
-    gameState, multiOutcomes, showModal, modalType, currentTrivia, shakeAnim, fadeAnim,
-    showMechanics, setShowMechanics, currentMechanics,
-    handleManualSelection, proceed
-  } = useGameLogic(onBack);
+  const { score, highScore, activeBackground, handleCatchPoints, resetScore, saveHighScore, convertScoreToCoins } = useScore();
+  const { currentLevel, catchCount, availableNumbers, gameState, multiOutcomes, showModal, modalType, currentTrivia, shakeAnim, fadeAnim, showMechanics, setShowMechanics, currentMechanics, handleManualSelection, proceed } = useGameLogic(onBack);
 
   const isUnderwaterEquipped = activeBackground === 'underwater_theme';
   const required = LEVEL_CONFIGS[currentLevel].requiredCatch;
@@ -45,14 +37,11 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
   useEffect(() => {
     if (gameState === 'RESULT' && multiOutcomes.length > 0) {
       const isShark = multiOutcomes.some(o => o.isShark);
-      
       if (isShark) {
         setScoreAtGameOver(score);
         convertScoreToCoins(score).then(amount => setEarnedCoins(amount));
       }
-      
       handleCatchPoints(multiOutcomes);
-      
       const list = isShark ? SHARK_PHRASES : CATCH_PHRASES;
       setActivePhrase(list[Math.floor(Math.random() * list.length)]);
     } else if (gameState === 'IDLE') {
@@ -75,13 +64,6 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
     setRandomTriviaVisible(true);
   };
 
-  const getBg = () => {
-    if (isUnderwaterEquipped) return { backgroundColor: '#000814' };
-    if (currentLevel === 2) return { backgroundColor: '#fb923c' };
-    if (currentLevel === 3) return { backgroundColor: '#450a0a' };
-    return { backgroundColor: '#001524' };
-  };
-
   const handleProceed = () => {
     if (modalType === 'LOSE') resetScore();
     else if (modalType === 'WIN' && currentLevel === 3) saveHighScore(score);
@@ -89,16 +71,10 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
   };
 
   return (
-    <View style={[styles.container, getBg()]}>
+    <View style={[styles.container, { backgroundColor: isUnderwaterEquipped ? '#000814' : (currentLevel === 2 ? '#fb923c' : (currentLevel === 3 ? '#450a0a' : '#001524')) }]}>
       <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
         {isUnderwaterEquipped ? (
-          <LottieView 
-            source={require('../../assets/gifs/Underwater Ocean Fish and Turtle.json')} 
-            autoPlay 
-            loop 
-            style={styles.fullScreenLottie}
-            resizeMode="cover"
-          />
+          <LottieView source={require('../../assets/gifs/Underwater Ocean Fish and Turtle.json')} autoPlay loop style={styles.fullScreenLottie} resizeMode="cover" />
         ) : (
           <>
             {currentLevel === 2 && <View style={styles.sun} />}
@@ -108,46 +84,23 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
         )}
       </View>
 
-      <GameHeader 
-        onBack={onBack} currentLevel={currentLevel} 
-        catchCount={catchCount} required={required} 
-        isMusicPlaying={isMusicPlaying} 
-        onPiliemonPress={onToggleMusic} onShowMechanics={() => setShowMechanics(true)} 
-        score={score}
-      />
+      <GameHeader onBack={onBack} currentLevel={currentLevel} catchCount={catchCount} required={required} isMusicPlaying={isMusicPlaying} onPiliemonPress={onToggleMusic} onShowMechanics={() => setShowMechanics(true)} score={score} />
 
       <Pressable style={styles.gameArea} onPress={() => gameState === 'IDLE' && selectorRef.current?.handleStop()}>
         <FloatingTriviaButton onPress={showTrivia} currentLevel={currentLevel} />
 
         <View style={styles.topContainerWrapper}>
           <View style={styles.selectorSection}>
-            {gameState === 'IDLE' && (
-              <LevelSelector 
-                ref={selectorRef} 
-                levels={availableNumbers} 
-                onSelectionTriggered={(n) => { triggerFeedback(n); handleManualSelection(n); }} 
-                disabled={gameState !== 'IDLE'} 
-              />
-            )}
+            {gameState === 'IDLE' && <LevelSelector ref={selectorRef} levels={availableNumbers} onSelectionTriggered={(n) => { triggerFeedback(n); handleManualSelection(n); }} disabled={gameState !== 'IDLE'} />}
           </View>
-
           <View style={styles.minimalScoreRow}>
-             <View style={styles.miniStat}>
-                <Text style={styles.miniLabel}>SCORE</Text>
-                <Text style={styles.miniValue}>{score.toLocaleString()}</Text>
-             </View>
-             <View style={styles.miniDivider} />
-             <View style={styles.miniStat}>
-                <Text style={styles.miniLabel}>BEST</Text>
-                <Text style={styles.miniValue}>{highScore.toLocaleString()}</Text>
-             </View>
+             <View style={styles.miniStat}><Text style={styles.miniLabel}>SCORE</Text><Text style={styles.miniValue}>{score.toLocaleString()}</Text></View>
+             <View style={styles.miniDivider} /><View style={styles.miniStat}><Text style={styles.miniLabel}>BEST</Text><Text style={styles.miniValue}>{highScore.toLocaleString()}</Text></View>
           </View>
         </View>
 
         {floatingValue && (
-          <Animated.View style={[styles.floatingIndicator, { opacity: opacityAnim, transform: [{ translateY: floatAnim }] }]}>
-            <Text style={styles.floatingText}>{floatingValue}</Text>
-          </Animated.View>
+          <Animated.View style={[styles.floatingIndicator, { opacity: opacityAnim, transform: [{ translateY: floatAnim }] }]}><Text style={styles.floatingText}>{floatingValue}</Text></Animated.View>
         )}
 
         <Animated.View style={[styles.visualContainer, { transform: [{ translateX: shakeAnim }] }]}>
@@ -165,41 +118,31 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
         </Animated.View>
       </Pressable>
 
-      <Modal visible={showModal} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
-          {modalType === 'WIN' && <ConfettiEffect />}
-          <View style={[styles.modalContent, modalType === 'WIN' && styles.winBorder]}>
-            <Text style={[styles.modalTitle, modalType === 'WIN' && styles.winTitleText]}>{modalType === 'WIN' ? `STAGE ${currentLevel} COMPLETE` : "GAME OVER"}</Text>
-            <View style={styles.statsRow}>
-              <View>
-                <Text style={styles.statLabel}>FINAL SCORE</Text>
-                <Text style={styles.statValue}>{modalType === 'WIN' ? score.toLocaleString() : scoreAtGameOver.toLocaleString()}</Text>
-              </View>
-              <View style={{ alignItems: 'flex-end' }}>
-                <Text style={[styles.statLabel, { color: '#fbbf24' }]}>COINS EARNED</Text>
-                <Text style={[styles.statValue, { color: '#fbbf24' }]}>+{modalType === 'WIN' ? Math.floor(score/2) : earnedCoins}</Text>
-              </View>
-            </View>
-            <Text style={styles.triviaLabel}>DID YOU KNOW?</Text>
-            <Text style={styles.triviaText}>{currentTrivia}</Text>
-            <TouchableOpacity style={[styles.actionBtn, modalType === 'WIN' && styles.winBtn, { marginTop: 20 }]} onPress={handleProceed}>
-              <Text style={[styles.btnText, modalType === 'WIN' && styles.winBtnText]}>{modalType === 'WIN' ? (currentLevel < 3 ? "NEXT LEVEL" : "FINISH MISSION") : "RESTART MISSION"}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+      {/* Main Game Outcome Modal */}
+      {showModal && <View style={StyleSheet.absoluteFillObject} pointerEvents="none">{modalType === 'WIN' && <ConfettiEffect />}</View>}
+      <TriviaModal 
+        visible={showModal}
+        onClose={handleProceed}
+        title={modalType === 'WIN' ? `STAGE ${currentLevel} COMPLETE` : "GAME OVER"}
+        content={currentTrivia}
+        isWin={modalType === 'WIN'}
+        themeColor={modalType === 'WIN' ? '#FFECD1' : '#ef4444'}
+        buttonText={modalType === 'WIN' ? (currentLevel < 3 ? "NEXT LEVEL" : "FINISH MISSION") : "RESTART MISSION"}
+        stats={{
+          score: modalType === 'WIN' ? score : scoreAtGameOver,
+          coins: modalType === 'WIN' ? Math.floor(score/2) : earnedCoins
+        }}
+      />
 
-      <Modal visible={randomTriviaVisible} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { borderColor: '#4ade80' }]}>
-            <Text style={[styles.modalTitle, { color: '#4ade80' }]}>SHARK FACT</Text>
-            <Text style={styles.triviaText}>{selectedTrivia}</Text>
-            <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#4ade80', marginTop: 20 }]} onPress={() => setRandomTriviaVisible(false)}>
-              <Text style={styles.btnText}>AWESOME!</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+      {/* Random Shark Fact Modal */}
+      <TriviaModal 
+        visible={randomTriviaVisible}
+        onClose={() => setRandomTriviaVisible(false)}
+        title="SHARK FACT"
+        content={selectedTrivia}
+        buttonText="AWESOME!"
+        themeColor="#4ade80"
+      />
 
       <MechanicsModal visible={showMechanics} onClose={() => setShowMechanics(false)} mechanics={currentMechanics} />
     </View>
@@ -226,19 +169,5 @@ const styles = StyleSheet.create({
   visualArea: { width: '100%', alignItems: 'center', minHeight: 350 },
   catchResultContainer: { position: 'absolute', top: -100, flexDirection: 'row', justifyContent: 'center', width: '100%' },
   catchAnim: { width: 400, height: 700 },
-  mainChar: { width: 600, height: 600, marginBottom: -60 },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0, 21, 36, 0.98)', justifyContent: 'center', alignItems: 'center', padding: 30 },
-  modalContent: { width: '100%', backgroundColor: '#022c43', padding: 30, borderLeftWidth: 4, borderColor: '#ef4444' },
-  winBorder: { borderColor: '#FFECD1' },
-  modalTitle: { color: '#ef4444', fontSize: 24, fontWeight: '900', marginBottom: 20 },
-  winTitleText: { color: '#FFECD1' },
-  statsRow: { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'rgba(0,0,0,0.3)', padding: 15, marginBottom: 20, borderRadius: 4 },
-  statLabel: { color: '#71717a', fontSize: 9, fontWeight: '900' },
-  statValue: { color: '#4ade80', fontSize: 20, fontWeight: '900' },
-  triviaLabel: { color: '#71717a', fontSize: 10, fontWeight: '800', marginBottom: 8 },
-  triviaText: { color: '#fafafa', fontSize: 16, lineHeight: 24 },
-  actionBtn: { backgroundColor: '#ef4444', paddingVertical: 15, alignItems: 'center' },
-  winBtn: { backgroundColor: '#FFECD1' },
-  btnText: { color: '#fafafa', fontWeight: '900', fontSize: 12 },
-  winBtnText: { color: '#001524' }
+  mainChar: { width: 600, height: 600, marginBottom: -60 }
 });

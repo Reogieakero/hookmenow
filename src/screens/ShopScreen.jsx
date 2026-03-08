@@ -36,11 +36,10 @@ export default function ShopScreen({ onBack }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={onBack} style={styles.backCircle}>
+        <TouchableOpacity onPress={onBack}>
           <Ionicons name="chevron-back" size={24} color="#fafafa" />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
-          <Text style={styles.headerLabel}>SYSTEM</Text>
           <Text style={styles.headerTitle}>MARKET</Text>
         </View>
         <View style={styles.coinBadge}>
@@ -66,7 +65,6 @@ export default function ShopScreen({ onBack }) {
           <View style={styles.details}>
             <View style={styles.detailsHeader}>
               <Text style={styles.productName}>DEEP ABYSS</Text>
-              <Text style={styles.productSeries}>VFX_MOD_01</Text>
             </View>
             
             <Text style={styles.description}>
@@ -123,7 +121,7 @@ export default function ShopScreen({ onBack }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#001524', paddingHorizontal: 24 },
+  container: { flex: 1, backgroundColor: '#001524', paddingHorizontal: 24},
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 20, marginBottom: 40 },
   backCircle: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.05)', justifyContent: 'center', alignItems: 'center' },
   headerCenter: { alignItems: 'center' },
@@ -132,7 +130,7 @@ const styles = StyleSheet.create({
   coinBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(251, 191, 36, 0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(251, 191, 36, 0.2)' },
   coinText: { color: '#fbbf24', fontSize: 14, fontWeight: '900', marginLeft: 4 },
   productContainer: { flex: 1, justifyContent: 'center' },
-  glassCard: { backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 32, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', overflow: 'hidden' },
+  glassCard: { backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', overflow: 'hidden' },
   previewBox: { height: 280, backgroundColor: '#000', justifyContent: 'center', alignItems: 'center' },
   lottiePreview: { width: '120%', height: '120%' },
   ownedTag: { position: 'absolute', top: 20, right: 20, backgroundColor: 'rgba(74, 222, 128, 0.2)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: '#4ade80' },
@@ -146,7 +144,7 @@ const styles = StyleSheet.create({
   priceLabel: { color: '#71717a', fontSize: 10, fontWeight: '900' },
   priceRow: { flexDirection: 'row', alignItems: 'center' },
   priceValue: { color: '#fafafa', fontSize: 20, fontWeight: '900' },
-  buyBtn: { backgroundColor: '#fafafa', paddingHorizontal: 24, paddingVertical: 14, borderRadius: 14 },
+  buyBtn: { backgroundColor: '#fafafa', paddingHorizontal: 24, paddingVertical: 14, borderRadius: 8 },
   activeBtn: { backgroundColor: '#4ade80' },
   activeBtnText: { color: '#000' },
   disabledBtn: { opacity: 0.2 },

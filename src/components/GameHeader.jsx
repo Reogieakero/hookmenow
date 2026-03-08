@@ -7,10 +7,10 @@ export default function GameHeader({ onBack, currentLevel, catchCount, required,
   return (
     <View style={styles.header}>
       <TouchableOpacity onPress={onBack} style={styles.back}>
-        <Ionicons name="arrow-back" size={20} color={isLvl2 ? "#fff" : "#71717a"} />
+          <Ionicons name="chevron-back" size={24} color="#fafafa" />
       </TouchableOpacity>
       <View style={{ flex: 1, marginLeft: 10 }}>
-        <Text style={[styles.title, isLvl2 && { color: '#fff' }]}>STAGE_0{currentLevel}</Text>
+        <Text style={[styles.title, isLvl2 && { color: '#fff' }]}>STAGE 0{currentLevel}</Text>
         <Text style={[styles.sub, isLvl2 && { color: '#ffedd5' }]}>
           PROGRESS: {catchCount}/{required}
         </Text>
