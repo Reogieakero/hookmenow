@@ -7,7 +7,6 @@ const COLORS = ['#FFECD1', '#ef4444', '#00A8E8', '#FFD700', '#70e000'];
 const ConfettiPiece = ({ index }) => {
   const animatedValue = useRef(new Animated.Value(0)).current;
 
-  // Randomize initial positions and trajectories
   const startX = Math.random() * width;
   const endX = startX + (Math.random() * 200 - 100);
   const rotation = Math.random() * 360;
@@ -69,5 +68,9 @@ export default function ConfettiEffect() {
 }
 
 const styles = StyleSheet.create({
-  piece: { position: 'absolute', top: 0, borderRadius: 2 },
+  piece: {
+    position: 'absolute',
+    top: 0,
+    borderRadius: 2,
+  },
 });

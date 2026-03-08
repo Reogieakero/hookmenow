@@ -48,20 +48,74 @@ const TriviaModal = ({
 };
 
 const styles = StyleSheet.create({
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0, 21, 36, 0.98)', justifyContent: 'center', alignItems: 'center', padding: 30 },
-  modalContent: { width: '100%', backgroundColor: '#022c43', padding: 30, borderLeftWidth: 4 },
-  winBorder: { borderColor: '#FFECD1' },
-  modalTitle: { fontSize: 24, fontWeight: '900', marginBottom: 20 },
-  winTitleText: { color: '#FFECD1' },
-  statsRow: { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'rgba(0,0,0,0.3)', padding: 15, marginBottom: 20, borderRadius: 4 },
-  statLabel: { color: '#71717a', fontSize: 9, fontWeight: '900' },
-  statValue: { color: '#4ade80', fontSize: 20, fontWeight: '900' },
-  triviaLabel: { color: '#71717a', fontSize: 10, fontWeight: '800', marginBottom: 8 },
-  triviaText: { color: '#fafafa', fontSize: 16, lineHeight: 24 },
-  actionBtn: { marginTop: 20, paddingVertical: 15, alignItems: 'center' },
-  winBtn: { backgroundColor: '#FFECD1' },
-  btnText: { fontWeight: '900', fontSize: 12 },
-  winBtnText: { color: '#001524' }
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 21, 36, 0.98)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 30,
+  },
+  modalContent: {
+    width: '100%',
+    backgroundColor: '#022c43',
+    padding: 30,
+    borderLeftWidth: 4,
+  },
+  winBorder: {
+    borderColor: '#FFECD1',
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: '900',
+    marginBottom: 20,
+  },
+  winTitleText: {
+    color: '#FFECD1',
+  },
+  statsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    padding: 15,
+    marginBottom: 20,
+    borderRadius: 4,
+  },
+  statLabel: {
+    color: '#71717a',
+    fontSize: 9,
+    fontWeight: '900',
+  },
+  statValue: {
+    color: '#4ade80',
+    fontSize: 20,
+    fontWeight: '900',
+  },
+  triviaLabel: {
+    color: '#71717a',
+    fontSize: 10,
+    fontWeight: '800',
+    marginBottom: 8,
+  },
+  triviaText: {
+    color: '#fafafa',
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  actionBtn: {
+    marginTop: 20,
+    paddingVertical: 15,
+    alignItems: 'center',
+  },
+  winBtn: {
+    backgroundColor: '#FFECD1',
+  },
+  btnText: {
+    fontWeight: '900',
+    fontSize: 12,
+  },
+  winBtnText: {
+    color: '#001524',
+  },
 });
 
 export default TriviaModal;

@@ -118,7 +118,6 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
         </Animated.View>
       </Pressable>
 
-      {/* Main Game Outcome Modal */}
       {showModal && <View style={StyleSheet.absoluteFillObject} pointerEvents="none">{modalType === 'WIN' && <ConfettiEffect />}</View>}
       <TriviaModal 
         visible={showModal}
@@ -134,7 +133,6 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
         }}
       />
 
-      {/* Random Shark Fact Modal */}
       <TriviaModal 
         visible={randomTriviaVisible}
         onClose={() => setRandomTriviaVisible(false)}
@@ -150,24 +148,119 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  fullScreenLottie: { width: width, height: screenHeight, opacity: 0.5 },
-  sun: { position: 'absolute', top: 120, right: 40, width: 80, height: 80, borderRadius: 40, backgroundColor: '#fed7aa', opacity: 0.8 },
-  gameArea: { flex: 1 },
-  topContainerWrapper: { marginTop: 10, paddingHorizontal: 30, zIndex: 50 },
-  selectorSection: { height: 140, justifyContent: 'center' },
-  minimalScoreRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 5 },
-  miniStat: { alignItems: 'center', paddingHorizontal: 20 },
-  miniDivider: { width: 1, height: 15, backgroundColor: 'rgba(255,255,255,0.15)' },
-  miniLabel: { color: 'rgba(255,255,255,0.3)', fontSize: 9, fontWeight: '900', letterSpacing: 1.5, marginBottom: 2 },
-  miniValue: { color: '#fff', fontSize: 18, fontWeight: '300' },
-  floatingIndicator: { position: 'absolute', top: '45%', left: width / 2 - 30, width: 60, height: 60, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 30, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' },
-  floatingText: { color: '#fff', fontSize: 28, fontWeight: '900' },
-  waves: { position: 'absolute', width: '100%', height: 300, bottom: -10 },
-  dolphin: { position: 'absolute', width: width * 0.5, height: 150, bottom: 50, right: 100, opacity: 0.6 },
-  visualContainer: { flex: 1, justifyContent: 'flex-end', paddingBottom: 60 },
-  visualArea: { width: '100%', alignItems: 'center', minHeight: 350 },
-  catchResultContainer: { position: 'absolute', top: -100, flexDirection: 'row', justifyContent: 'center', width: '100%' },
-  catchAnim: { width: 400, height: 700 },
-  mainChar: { width: 600, height: 600, marginBottom: -60 }
+  container: {
+    flex: 1,
+  },
+  fullScreenLottie: {
+    width: width,
+    height: screenHeight,
+    opacity: 0.5,
+  },
+  sun: {
+    position: 'absolute',
+    top: 120,
+    right: 40,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#fed7aa',
+    opacity: 0.8,
+  },
+  gameArea: {
+    flex: 1,
+  },
+  topContainerWrapper: {
+    marginTop: 10,
+    paddingHorizontal: 30,
+    zIndex: 50,
+  },
+  selectorSection: {
+    height: 140,
+    justifyContent: 'center',
+  },
+  minimalScoreRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  miniStat: {
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  miniDivider: {
+    width: 1,
+    height: 15,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+  },
+  miniLabel: {
+    color: 'rgba(255,255,255,0.3)',
+    fontSize: 9,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+    marginBottom: 2,
+  },
+  miniValue: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '300',
+  },
+  floatingIndicator: {
+    position: 'absolute',
+    top: '45%',
+    left: width / 2 - 30,
+    width: 60,
+    height: 60,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  floatingText: {
+    color: '#fff',
+    fontSize: 28,
+    fontWeight: '900',
+  },
+  waves: {
+    position: 'absolute',
+    width: '100%',
+    height: 300,
+    bottom: -10,
+  },
+  dolphin: {
+    position: 'absolute',
+    width: width * 0.5,
+    height: 150,
+    bottom: 50,
+    right: 100,
+    opacity: 0.6,
+  },
+  visualContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: 60,
+  },
+  visualArea: {
+    width: '100%',
+    alignItems: 'center',
+    minHeight: 350,
+  },
+  catchResultContainer: {
+    position: 'absolute',
+    top: -100,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  catchAnim: {
+    width: 400,
+    height: 700,
+  },
+  mainChar: {
+    width: 600,
+    height: 600,
+    marginBottom: -60,
+  },
 });

@@ -27,13 +27,51 @@ export default function GameHeader({ onBack, currentLevel, catchCount, required,
 }
 
 const styles = StyleSheet.create({
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 25, paddingTop: 20, paddingBottom: 20, zIndex: 10 },
-  back: { padding: 4 },
-  title: { color: '#fafafa', fontSize: 12, fontWeight: '800' },
-  sub: { color: '#71717a', fontSize: 9, fontWeight: '600' },
-  pBtn: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#4ade80', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4, marginRight: 8 },
-  pActive: { backgroundColor: '#4ade80' },
-  pText: { color: '#4ade80', fontSize: 10, fontWeight: 'bold', marginLeft: 4 },
-  pTextActive: { color: '#001524' },
-  help: { padding: 5, marginLeft: 5 }
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 25,
+    paddingTop: 20,
+    paddingBottom: 20,
+    zIndex: 10,
+  },
+  back: {
+    padding: 4,
+  },
+  title: {
+    color: '#fafafa',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  sub: {
+    color: '#71717a',
+    fontSize: 9,
+    fontWeight: '600',
+  },
+  pBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#4ade80',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    marginRight: 8,
+  },
+  pActive: {
+    backgroundColor: '#4ade80',
+  },
+  pText: {
+    color: '#4ade80',
+    fontSize: 10,
+    fontWeight: 'bold',
+    marginLeft: 4,
+  },
+  pTextActive: {
+    color: '#001524',
+  },
+  help: {
+    padding: 5,
+    marginLeft: 5,
+  },
 });

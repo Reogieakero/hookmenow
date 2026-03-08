@@ -36,7 +36,25 @@ export default function FloatingTriviaButton({ onPress, currentLevel }) {
 }
 
 const styles = StyleSheet.create({
-  btn: { position: 'absolute', width: ICON_SIZE, height: ICON_SIZE, borderRadius: ICON_SIZE / 2, backgroundColor: 'rgba(74, 222, 128, 0.1)', borderWidth: 1, borderColor: '#4ade80', zIndex: 999, elevation: 5 },
-  lvl2: { backgroundColor: 'rgba(255,255,255,0.2)', borderColor: '#fff' },
-  touch: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
+  btn: {
+    position: 'absolute',
+    width: ICON_SIZE,
+    height: ICON_SIZE,
+    borderRadius: ICON_SIZE / 2,
+    backgroundColor: 'rgba(74, 222, 128, 0.1)',
+    borderWidth: 1,
+    borderColor: '#4ade80',
+    zIndex: 999,
+    elevation: 5,
+  },
+  lvl2: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderColor: '#fff',
+  },
+  touch: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

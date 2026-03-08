@@ -79,14 +79,49 @@ const LevelSelector = forwardRef(({ levels, onSelectionTriggered, disabled }, re
 });
 
 const styles = StyleSheet.create({
-  touchArea: { width: '100%', alignItems: 'center' },
-  carouselContainer: { height: ITEM_SIZE, justifyContent: 'center', width: width },
-  listContent: { paddingHorizontal: (width - ITEM_SIZE) / 2 },
-  card: { width: ITEM_SIZE - 20, height: ITEM_SIZE - 20, borderRadius: 2, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.05)', justifyContent: 'center', alignItems: 'center', marginHorizontal: 10 },
-  activeCard: { backgroundColor: 'rgba(255, 255, 255, 0.1)', borderColor: '#4ade80', borderWidth: 2 },
-  levelText: { color: '#71717a', fontSize: 18, fontWeight: '400' },
-  activeLevelText: { color: '#4ade80', fontWeight: '900' },
-  hintText: { color: '#ffffff', fontSize: 9, fontWeight: '700', letterSpacing: 2, marginTop: 12 }
+  touchArea: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  carouselContainer: {
+    height: ITEM_SIZE,
+    justifyContent: 'center',
+    width: width,
+  },
+  listContent: {
+    paddingHorizontal: (width - ITEM_SIZE) / 2,
+  },
+  card: {
+    width: ITEM_SIZE - 20,
+    height: ITEM_SIZE - 20,
+    borderRadius: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 10,
+  },
+  activeCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: '#4ade80',
+    borderWidth: 2,
+  },
+  levelText: {
+    color: '#71717a',
+    fontSize: 18,
+    fontWeight: '400',
+  },
+  activeLevelText: {
+    color: '#4ade80',
+    fontWeight: '900',
+  },
+  hintText: {
+    color: '#ffffff',
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 2,
+    marginTop: 12,
+  },
 });
 
 export default LevelSelector;
