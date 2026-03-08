@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { StyleSheet, Animated, PanResponder, TouchableOpacity, Dimensions } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 const ICON_SIZE = 50;

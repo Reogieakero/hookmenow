@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Animated, Pressable, Dimensions } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';import LottieView from 'lottie-react-native';
+import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import LottieView from 'lottie-react-native';
 import InstructionCard from '../components/InstructionCard';
 import { useTypingAnimation } from '../hooks/useTypingAnimation';
 import { useScore } from '../hooks/useScore';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function GameHeader({ onBack, currentLevel, catchCount, required, isMusicPlaying, onPiliemonPress, onShowMechanics }) {
   const isLvl2 = currentLevel === 2;
