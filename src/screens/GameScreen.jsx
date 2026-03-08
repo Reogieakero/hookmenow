@@ -24,10 +24,14 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
   const [selectedTrivia, setSelectedTrivia] = useState("");
   const [floatingValue, setFloatingValue] = useState(null);
   const [scoreAtGameOver, setScoreAtGameOver] = useState(0);
+  const [earnedCoins, setEarnedCoins] = useState(0);
   const floatAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
-  const { score, highScore, handleCatchPoints, resetScore, saveHighScore } = useScore();
+  const { 
+    score, highScore, 
+    handleCatchPoints, resetScore, saveHighScore, convertScoreToCoins 
+  } = useScore();
 
   const {
     currentLevel, catchCount, availableNumbers, selectedSet, isManualMode, setIsManualMode,
@@ -41,14 +45,20 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
   useEffect(() => {
     if (gameState === 'RESULT' && multiOutcomes.length > 0) {
       const isShark = multiOutcomes.some(o => o.isShark);
-      if (isShark) setScoreAtGameOver(score);
+      
+      if (isShark) {
+        setScoreAtGameOver(score);
+        convertScoreToCoins(score).then(amount => setEarnedCoins(amount));
+      }
+      
       handleCatchPoints(multiOutcomes);
+      
       const list = isShark ? SHARK_PHRASES : CATCH_PHRASES;
       setActivePhrase(list[Math.floor(Math.random() * list.length)]);
     } else if (gameState === 'IDLE') {
       setActivePhrase("");
     }
-  }, [gameState, multiOutcomes]);
+  }, [gameState]);
 
   const triggerFeedback = (num) => {
     setFloatingValue(num);
@@ -162,8 +172,8 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
                 <Text style={styles.statValue}>{modalType === 'WIN' ? score.toLocaleString() : scoreAtGameOver.toLocaleString()}</Text>
               </View>
               <View style={{ alignItems: 'flex-end' }}>
-                <Text style={styles.statLabel}>HIGH SCORE</Text>
-                <Text style={styles.statValue}>{highScore.toLocaleString()}</Text>
+                <Text style={[styles.statLabel, { color: '#fbbf24' }]}>COINS EARNED</Text>
+                <Text style={[styles.statValue, { color: '#fbbf24' }]}>+{modalType === 'WIN' ? Math.floor(score/2) : earnedCoins}</Text>
               </View>
             </View>
             <Text style={styles.triviaLabel}>DID YOU KNOW?</Text>

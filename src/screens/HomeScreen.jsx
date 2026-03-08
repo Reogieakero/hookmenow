@@ -1,13 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Animated, Pressable, Dimensions } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 import { useTypingAnimation } from '../hooks/useTypingAnimation';
+import { useScore } from '../hooks/useScore';
 
 const { width, height: screenHeight } = Dimensions.get('window');
 
 export default function HomeScreen({ onStart, isMuted, onToggleAudio }) {
   const { line1, line2 } = useTypingAnimation("HOOK ME", "NOW", 300);
+  const { coins } = useScore();
   const cursorOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -22,7 +24,10 @@ export default function HomeScreen({ onStart, isMuted, onToggleAudio }) {
   return (
     <View style={styles.container}>
       <View style={styles.nav}>
-        <View />
+        <View style={styles.coinBadge}>
+          <MaterialIcons name="monetization-on" size={18} color="#fbbf24" />
+          <Text style={styles.coinText}>{coins.toLocaleString()}</Text>
+        </View>
         <Pressable style={styles.iconButton} onPress={onToggleAudio}>
           <Ionicons 
             name={isMuted ? "volume-mute" : "volume-high"} 
@@ -85,6 +90,17 @@ export default function HomeScreen({ onStart, isMuted, onToggleAudio }) {
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 28 },
   nav: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 24, zIndex: 20 },
+  coinBadge: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    backgroundColor: 'rgba(251, 191, 36, 0.15)', 
+    paddingHorizontal: 14, 
+    paddingVertical: 8, 
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(251, 191, 36, 0.3)'
+  },
+  coinText: { color: '#fbbf24', fontSize: 16, fontWeight: '900', marginLeft: 6 },
   iconButton: { padding: 10, backgroundColor: 'rgba(24, 24, 27, 0.8)', borderRadius: 10, borderWidth: 1, borderColor: '#27272a' },
   main: { flex: 1, justifyContent: 'center', alignItems: 'flex-start', zIndex: 20 },
   logoEmoji: { fontSize: 80, marginBottom: 24 },

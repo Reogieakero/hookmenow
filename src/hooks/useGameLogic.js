@@ -2,9 +2,27 @@ import { useState, useEffect, useRef } from 'react';
 import { Animated } from 'react-native';
 
 export const LEVEL_CONFIGS = {
-  1: { sharkCount: 2, totalPool: 10, requiredCatch: 5, description: "Calm waters. Exactly 2 sharks are hiding. Catch 5 fish to proceed." },
-  2: { sharkCount: 2, totalPool: 10, requiredCatch: 6, description: "Choppy seas. Still 2 sharks, but you need more fish. Catch 6 fish." },
-  3: { sharkWeight: 5, fishWeight: 5, requiredCatch: 3, description: "DANGER ZONE! 5 Sharks in the water. Catch 3 fish to survive." },
+  1: { 
+    stage: 1,
+    sharkCount: 2, 
+    totalPool: 10, 
+    requiredCatch: 5, 
+    description: "Calm waters. Exactly 2 sharks are hiding. Catch 5 fish to proceed." 
+  },
+  2: { 
+    stage: 2,
+    sharkCount: 2, 
+    totalPool: 10, 
+    requiredCatch: 6, 
+    description: "Choppy seas. Still 2 sharks, but you need more fish. Catch 6 fish." 
+  },
+  3: { 
+    stage: 3,
+    sharkWeight: 5, 
+    fishWeight: 5, 
+    requiredCatch: 3, 
+    description: "DANGER ZONE! 5 Sharks in the water. Catch 3 fish to survive." 
+  },
 };
 
 const SHARK_TRIVIA = [
@@ -143,7 +161,8 @@ export function useGameLogic(onBack) {
   return {
     currentLevel, catchCount, availableNumbers, selectedSet, isManualMode, setIsManualMode,
     gameState, multiOutcomes, showModal, modalType, currentTrivia, shakeAnim, fadeAnim,
-    showMechanics, setShowMechanics, currentMechanics: LEVEL_CONFIGS[currentLevel].description,
+    showMechanics, setShowMechanics, 
+    currentMechanics: LEVEL_CONFIGS[currentLevel],
     handleManualSelection, handleHookNow, toggleNumber, proceed
   };
 }
