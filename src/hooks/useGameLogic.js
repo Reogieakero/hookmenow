@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Animated } from 'react-native';
 
 export const LEVEL_CONFIGS = {
-  1: { sharkWeight: 2, fishWeight: 8, requiredCatch: 5, description: "Calm waters. Sharks are rare. Catch 5 fish to proceed." },
+  1: { sharkCount: 2, totalPool: 10, requiredCatch: 5, description: "Calm waters. Exactly 2 sharks are hiding. Catch 5 fish to proceed." },
   2: { sharkWeight: 3, fishWeight: 7, requiredCatch: 6, description: "Choppy seas. Sharks are getting curious. Catch 6 fish." },
   3: { sharkWeight: 5, fishWeight: 5, requiredCatch: 3, description: "DANGER ZONE! 5 Sharks in the water. Catch 3 fish to survive." },
 };
@@ -25,6 +25,7 @@ export function useGameLogic(onBack) {
   const [currentLevel, setCurrentLevel] = useState(1);
   const [catchCount, setCatchCount] = useState(0);
   const [availableNumbers, setAvailableNumbers] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  const [levelOneMap, setLevelOneMap] = useState({});
   const [selectedSet, setSelectedSet] = useState([]);
   const [isManualMode, setIsManualMode] = useState(false);
   const [gameState, setGameState] = useState('IDLE');
@@ -36,6 +37,25 @@ export function useGameLogic(onBack) {
 
   const shakeAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (currentLevel === 1) {
+      const pool = new Array(10).fill(false);
+      let sharksPlaced = 0;
+      while (sharksPlaced < 2) {
+        let randIdx = Math.floor(Math.random() * 10);
+        if (!pool[randIdx]) {
+          pool[randIdx] = true;
+          sharksPlaced++;
+        }
+      }
+      const mapping = {};
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach((num, index) => {
+        mapping[num] = pool[index];
+      });
+      setLevelOneMap(mapping);
+    }
+  }, [currentLevel]);
 
   const triggerShake = () => {
     Animated.sequence([
@@ -68,10 +88,15 @@ export function useGameLogic(onBack) {
     setGameState('CASTING');
     const config = LEVEL_CONFIGS[currentLevel];
     
-    const results = pickedNumbers.map(num => ({
-      num,
-      isShark: (Math.floor(Math.random() * 10) + 1) <= config.sharkWeight
-    }));
+    const results = pickedNumbers.map(num => {
+      let isShark = false;
+      if (currentLevel === 1) {
+        isShark = levelOneMap[num];
+      } else {
+        isShark = (Math.floor(Math.random() * 10) + 1) <= config.sharkWeight;
+      }
+      return { num, isShark };
+    });
 
     setMultiOutcomes(results);
 

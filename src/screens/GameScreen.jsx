@@ -1,17 +1,20 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Modal, Animated, Pressable, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 import LevelSelector from '../components/LevelSelector';
 import ConfettiEffect from '../components/ConfettiEffect';
 import MechanicsModal from '../components/MechanicsModal';
+import CatchDialogue from '../components/CatchDialogue';
 import { useGameLogic, LEVEL_CONFIGS } from '../hooks/useGameLogic';
 
 const { width } = Dimensions.get('window');
+const CATCH_PHRASES = ["PALDOO!", "HULI!", "LAKING ISDA!", "KUHA!", "PANALO!"];
 
 export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
   const selectorRef = useRef();
   const [audioAlertVisible, setAudioAlertVisible] = useState(false);
+  const [activePhrase, setActivePhrase] = useState("");
 
   const {
     currentLevel, catchCount, availableNumbers, selectedSet, isManualMode, setIsManualMode,
@@ -21,6 +24,15 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
   } = useGameLogic(onBack);
 
   const required = LEVEL_CONFIGS[currentLevel].requiredCatch;
+
+  useEffect(() => {
+    if (gameState === 'RESULT' && multiOutcomes.length === 1 && !multiOutcomes[0]?.isShark) {
+      const randomText = CATCH_PHRASES[Math.floor(Math.random() * CATCH_PHRASES.length)];
+      setActivePhrase(randomText);
+    } else if (gameState !== 'RESULT') {
+      setActivePhrase("");
+    }
+  }, [gameState, multiOutcomes]);
 
   const handlePiliemonPress = () => {
     if (isMusicPlaying) {
@@ -102,6 +114,13 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
         </View>
 
         <LottieView
+          source={require('../../assets/gifs/Dolphin Jumping.json')}
+          autoPlay
+          loop
+          style={styles.dolphinBackground}
+        />
+
+        <LottieView
           source={require('../../assets/gifs/sea waves.json')}
           autoPlay
           loop
@@ -110,13 +129,17 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
 
         <Animated.View style={[styles.visualizationContainer, { transform: [{ translateX: shakeAnim }] }]}>
           <View style={styles.visualArea}>
+            {activePhrase !== "" && <CatchDialogue text={activePhrase} />}
+            
             {gameState === 'IDLE' || multiOutcomes.length <= 1 ? (
-              <LottieView
-                source={require('../../assets/gifs/humanfishing.json')}
-                autoPlay
-                loop={gameState !== 'RESULT'}
-                style={styles.mainChar}
-              />
+              <View style={styles.mainCharWrapper}>
+                <LottieView
+                  source={require('../../assets/gifs/humanfishing.json')}
+                  autoPlay
+                  loop={gameState !== 'RESULT'}
+                  style={styles.mainChar}
+                />
+              </View>
             ) : (
               <View style={styles.multiFisherRow}>
                 {multiOutcomes.map((item, index) => {
@@ -225,14 +248,16 @@ const styles = StyleSheet.create({
   hookBtn: { backgroundColor: '#4ade80', marginTop: 10, paddingHorizontal: 20, paddingVertical: 6, borderRadius: 4 },
   hookBtnText: { color: '#001524', fontWeight: '900', fontSize: 11 },
   waveBackground: { position: 'absolute', width: '100%', height: 300, opacity: 0.8, bottom: -10, zIndex: 1 },
+  dolphinBackground: { position: 'absolute', width: width * 0.5, height: 150, bottom: 50, right: 100, zIndex: 0, opacity: 0.6 },
   visualizationContainer: { flex: 1, justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 60 },
   visualArea: { width: '100%', alignItems: 'center', position: 'relative', minHeight: 350 },
-  mainChar: { width: 400, height: 400, zIndex: 2 },
+  mainCharWrapper: { position: 'relative', alignItems: 'center' },
+  mainChar: { width: 600, height: 600, zIndex: 2, marginBottom: -60 },
   multiFisherRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', width: '100%', zIndex: 2, paddingHorizontal: 10 },
-  fisherColumn: { alignItems: 'center', marginVertical: 10, position: 'relative' },
+  fisherColumn: { alignItems: 'center', marginVertical: 5, position: 'relative' },
   fisherLabel: { color: '#4ade80', fontSize: 10, fontWeight: 'bold', marginBottom: -10 },
-  largeFisher: { width: 120, height: 120 },
-  individualResultOverlay: { position: 'absolute', top: 10, alignItems: 'center', justifyContent: 'center', width: '100%' },
+  largeFisher: { width: 180, height: 180 },
+  individualResultOverlay: { position: 'absolute', top: -10, alignItems: 'center', justifyContent: 'center', width: '100%' },
   miniAnim: { width: 85, height: 85 },
   miniStatus: { fontSize: 10, fontWeight: '900', marginTop: -15, textShadowColor: '#000', textShadowRadius: 3 },
   outcomeOverlay: { position: 'absolute', bottom: 100, width: '100%', zIndex: 5, alignItems: 'center' },

@@ -67,6 +67,12 @@ export default function HomeScreen({ onStart, isMuted, onToggleAudio }) {
         <LottieView
           autoPlay
           loop
+          style={styles.dolphinAnimation}
+          source={require('../../assets/gifs/Dolphin Jumping.json')}
+        />
+        <LottieView
+          autoPlay
+          loop
           style={styles.lottieWaves}
           source={require('../../assets/gifs/sea waves.json')} 
           speed={0.3}
@@ -109,4 +115,12 @@ const styles = StyleSheet.create({
     height: '100%',
     transform: [{ scaleY: 1.2 }], 
   },
+  dolphinAnimation: {
+    width: width * 0.6,
+    height: 200,
+    position: 'absolute',
+    top: '40%',
+    left: '20%',
+    zIndex: 2,
+  }
 });
