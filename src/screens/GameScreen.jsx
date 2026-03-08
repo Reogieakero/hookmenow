@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Modal, Animated, Pressable, Dimensions } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 import LevelSelector from '../components/LevelSelector';
 import ConfettiEffect from '../components/ConfettiEffect';
@@ -34,10 +33,10 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
   } = useScore();
 
   const {
-    currentLevel, catchCount, availableNumbers, selectedSet, isManualMode, setIsManualMode,
+    currentLevel, catchCount, availableNumbers,
     gameState, multiOutcomes, showModal, modalType, currentTrivia, shakeAnim, fadeAnim,
     showMechanics, setShowMechanics, currentMechanics,
-    handleManualSelection, handleHookNow, toggleNumber, proceed
+    handleManualSelection, proceed
   } = useGameLogic(onBack);
 
   const required = LEVEL_CONFIGS[currentLevel].requiredCatch;
@@ -92,35 +91,25 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
       {currentLevel === 2 && <View style={styles.sun} />}
 
       <GameHeader 
-        onBack={onBack} currentLevel={currentLevel} isManualMode={isManualMode} 
-        setIsManualMode={setIsManualMode} catchCount={catchCount} required={required} 
-        selectedCount={selectedSet.length} isMusicPlaying={isMusicPlaying} 
+        onBack={onBack} currentLevel={currentLevel} 
+        catchCount={catchCount} required={required} 
+        isMusicPlaying={isMusicPlaying} 
         onPiliemonPress={onToggleMusic} onShowMechanics={() => setShowMechanics(true)} 
         score={score}
       />
 
-      <Pressable style={styles.gameArea} onPress={() => !isManualMode && gameState === 'IDLE' && selectorRef.current?.handleStop()}>
+      <Pressable style={styles.gameArea} onPress={() => gameState === 'IDLE' && selectorRef.current?.handleStop()}>
         <FloatingTriviaButton onPress={showTrivia} currentLevel={currentLevel} />
 
         <View style={styles.topContainerWrapper}>
           <View style={styles.selectorSection}>
             {gameState === 'IDLE' && (
-              isManualMode ? (
-                <View style={styles.manualArea}>
-                  <View style={styles.grid}>
-                    {availableNumbers.map(num => (
-                      <TouchableOpacity key={num} onPress={() => { if (!selectedSet.includes(num)) triggerFeedback(num); toggleNumber(num); }} style={[styles.numBtn, selectedSet.includes(num) && styles.activeNumBtn]}>
-                        <Text style={[styles.numText, selectedSet.includes(num) && styles.activeNumText]}>{num}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                  {selectedSet.length === required && (
-                    <TouchableOpacity style={styles.hookBtn} onPress={handleHookNow}><Text style={styles.hookBtnText}>CAST ALL LINES</Text></TouchableOpacity>
-                  )}
-                </View>
-              ) : (
-                <LevelSelector ref={selectorRef} levels={availableNumbers} onSelectionTriggered={(n) => { triggerFeedback(n); handleManualSelection(n); }} disabled={gameState !== 'IDLE'} />
-              )
+              <LevelSelector 
+                ref={selectorRef} 
+                levels={availableNumbers} 
+                onSelectionTriggered={(n) => { triggerFeedback(n); handleManualSelection(n); }} 
+                disabled={gameState !== 'IDLE'} 
+              />
             )}
           </View>
 
@@ -215,14 +204,6 @@ const styles = StyleSheet.create({
   miniValue: { color: '#fff', fontSize: 18, fontWeight: '300', fontFamily: 'System' },
   floatingIndicator: { position: 'absolute', top: '45%', left: width / 2 - 30, width: 60, height: 60, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 30, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' },
   floatingText: { color: '#fff', fontSize: 28, fontWeight: '900' },
-  manualArea: { alignItems: 'center' },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
-  numBtn: { width: 40, height: 40, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', margin: 4, justifyContent: 'center', alignItems: 'center' },
-  activeNumBtn: { backgroundColor: '#4ade80', borderColor: '#4ade80' },
-  numText: { color: '#71717a', fontWeight: 'bold' },
-  activeNumText: { color: '#000' },
-  hookBtn: { backgroundColor: '#fff', marginTop: 10, paddingHorizontal: 28, paddingVertical: 8, borderRadius: 25 },
-  hookBtnText: { color: '#000', fontWeight: '900', fontSize: 12 },
   waves: { position: 'absolute', width: '100%', height: 300, bottom: -10 },
   dolphin: { position: 'absolute', width: width * 0.5, height: 150, bottom: 50, right: 100, opacity: 0.6 },
   visualContainer: { flex: 1, justifyContent: 'flex-end', paddingBottom: 60 },
