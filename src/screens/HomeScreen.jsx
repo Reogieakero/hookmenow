@@ -1,13 +1,15 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Animated, Pressable, Dimensions } from 'react-native';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
+import InstructionCard from '../components/InstructionCard';
 import { useTypingAnimation } from '../hooks/useTypingAnimation';
 import { useScore } from '../hooks/useScore';
 
 const { width, height: screenHeight } = Dimensions.get('window');
 
 export default function HomeScreen({ onStart, isMuted, onToggleAudio, onOpenShop }) {
+  const [showInstructions, setShowInstructions] = useState(false);
   const { line1, line2 } = useTypingAnimation("HOOK ME", "NOW", 300);
   const { coins, activeBackground } = useScore();
   const cursorOpacity = useRef(new Animated.Value(0)).current;
@@ -26,45 +28,29 @@ export default function HomeScreen({ onStart, isMuted, onToggleAudio, onOpenShop
     <View style={[styles.container, isUnderwater && { backgroundColor: '#000814' }]}>
       <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
         {isUnderwater ? (
-          <LottieView
-            autoPlay
-            loop
-            style={styles.fullScreenLottie}
-            source={require('../../assets/gifs/Underwater Ocean Fish and Turtle.json')}
-            resizeMode="cover"
-          />
+          <LottieView autoPlay loop style={styles.fullScreenLottie} source={require('../../assets/gifs/Underwater Ocean Fish and Turtle.json')} resizeMode="cover" />
         ) : (
           <View style={styles.defaultWaveWrapper}>
-            <LottieView
-              autoPlay
-              loop
-              style={styles.dolphinAnimation}
-              source={require('../../assets/gifs/Dolphin Jumping.json')}
-            />
-            <LottieView
-              autoPlay
-              loop
-              style={styles.lottieWaves}
-              source={require('../../assets/gifs/sea waves.json')} 
-              speed={0.3}
-            />
+            <LottieView autoPlay loop style={styles.dolphinAnimation} source={require('../../assets/gifs/Dolphin Jumping.json')} />
+            <LottieView autoPlay loop style={styles.lottieWaves} source={require('../../assets/gifs/sea waves.json')} speed={0.3} />
           </View>
         )}
       </View>
 
       <View style={styles.nav}>
-        <TouchableOpacity style={styles.coinBadge} onPress={onOpenShop} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.coinBadge} onPress={onOpenShop}>
           <MaterialIcons name="monetization-on" size={18} color="#fbbf24" />
           <Text style={styles.coinText}>{coins.toLocaleString()}</Text>
         </TouchableOpacity>
 
-        <Pressable style={styles.iconButton} onPress={onToggleAudio}>
-          <Ionicons 
-            name={isMuted ? "volume-mute" : "volume-high"} 
-            size={20} 
-            color={isMuted ? "#71717a" : "#fafafa"} 
-          />
-        </Pressable>
+        <View style={styles.navRight}>
+          <Pressable style={[styles.iconButton, { marginRight: 10 }]} onPress={() => setShowInstructions(true)}>
+            <MaterialCommunityIcons name="information-variant" size={20} color="#fafafa" />
+          </Pressable>
+          <Pressable style={styles.iconButton} onPress={onToggleAudio}>
+            <Ionicons name={isMuted ? "volume-mute" : "volume-high"} size={20} color={isMuted ? "#71717a" : "#fafafa"} />
+          </Pressable>
+        </View>
       </View>
 
       <View style={styles.main}>
@@ -72,15 +58,11 @@ export default function HomeScreen({ onStart, isMuted, onToggleAudio, onOpenShop
         <View style={styles.titleContainer}>
           <View style={styles.lineHeightFix}>
              <Text style={styles.titleLine}>{line1}</Text>
-             {line2 === '' && line1 !== '' && (
-               <Animated.View style={[styles.cursor, { opacity: cursorOpacity }]} />
-             )}
+             {line2 === '' && line1 !== '' && <Animated.View style={[styles.cursor, { opacity: cursorOpacity }]} />}
           </View>
           <View style={styles.row}>
             <Text style={[styles.titleLine, styles.highlightText]}>{line2}</Text>
-            {line2 !== '' && (
-              <Animated.View style={[styles.cursor, { opacity: cursorOpacity }]} />
-            )}
+            {line2 !== '' && <Animated.View style={[styles.cursor, { opacity: cursorOpacity }]} />}
           </View>
         </View>
         <Text style={styles.description}>
@@ -90,13 +72,15 @@ export default function HomeScreen({ onStart, isMuted, onToggleAudio, onOpenShop
       </View>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.primaryButton} onPress={onStart} activeOpacity={0.8}>
+        <TouchableOpacity style={styles.primaryButton} onPress={onStart}>
           <Text style={styles.primaryButtonText}>Play now</Text>
         </TouchableOpacity>
         <View style={styles.legalContainer}>
             <Text style={styles.legalText}>© 2026 DEEP SEA OPERATIONS</Text>
         </View>
       </View>
+
+      <InstructionCard visible={showInstructions} onClose={() => setShowInstructions(false)} />
     </View>
   );
 }
@@ -141,6 +125,10 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 24,
     zIndex: 20,
+  },
+  navRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   coinBadge: {
     flexDirection: 'row',
@@ -221,10 +209,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fafafa',
     paddingVertical: 18,
     borderRadius: 12,
-    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
   },
   primaryButtonText: {
     color: '#09090b',
