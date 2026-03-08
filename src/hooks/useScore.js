@@ -5,6 +5,8 @@ export const useScore = () => {
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
   const [coins, setCoins] = useState(0);
+  const [ownedItems, setOwnedItems] = useState([]);
+  const [activeBackground, setActiveBackground] = useState('default');
 
   useEffect(() => {
     loadData();
@@ -14,12 +16,46 @@ export const useScore = () => {
     try {
       const savedHS = await AsyncStorage.getItem('highScore');
       const savedCoins = await AsyncStorage.getItem('totalCoins');
+      const savedOwned = await AsyncStorage.getItem('ownedItems');
+      const savedActiveBg = await AsyncStorage.getItem('activeBackground');
+
       if (savedHS !== null) setHighScore(parseInt(savedHS));
       if (savedCoins !== null) setCoins(parseInt(savedCoins));
+      if (savedOwned !== null) setOwnedItems(JSON.parse(savedOwned));
+      if (savedActiveBg !== null) setActiveBackground(savedActiveBg);
     } catch (e) {
       console.error(e);
     }
   };
+
+  const purchaseItem = useCallback(async (itemId, price) => {
+    if (coins >= price) {
+      try {
+        const newTotal = coins - price;
+        const newOwned = [...ownedItems, itemId];
+        
+        await AsyncStorage.setItem('totalCoins', newTotal.toString());
+        await AsyncStorage.setItem('ownedItems', JSON.stringify(newOwned));
+        
+        setCoins(newTotal);
+        setOwnedItems(newOwned);
+        return true;
+      } catch (e) {
+        console.error(e);
+        return false;
+      }
+    }
+    return false;
+  }, [coins, ownedItems]);
+
+  const updateActiveBackground = useCallback(async (bgId) => {
+    try {
+      await AsyncStorage.setItem('activeBackground', bgId);
+      setActiveBackground(bgId);
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
 
   const convertScoreToCoins = useCallback(async (finalScore) => {
     const earnedCoins = Math.floor(finalScore / 2);
@@ -71,9 +107,13 @@ export const useScore = () => {
     score, 
     highScore, 
     coins, 
+    ownedItems,
+    activeBackground,
     handleCatchPoints, 
     resetScore, 
     saveHighScore, 
-    convertScoreToCoins 
+    convertScoreToCoins,
+    purchaseItem,
+    setActiveBackground: updateActiveBackground
   };
 };

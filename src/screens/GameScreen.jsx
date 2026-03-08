@@ -10,7 +10,7 @@ import FloatingTriviaButton from '../components/FloatingTriviaButton';
 import { useGameLogic, LEVEL_CONFIGS } from '../hooks/useGameLogic';
 import { useScore } from '../hooks/useScore';
 
-const { width } = Dimensions.get('window');
+const { width, height: screenHeight } = Dimensions.get('window');
 
 const TRIVIA_LIST = ["Sharks have been around for more than 400 million years.", "The whale shark is the largest fish in the world.", "A shark's skin feels similar to sandpaper.", "Most sharks have to keep swimming to stay alive.", "Sharks do not have bones; they have cartilage.", "Some sharks can live for over 400 years.", "A shark can smell a drop of blood from miles away.", "Hammerhead sharks have 360-degree vision.", "Great white sharks can jump 10 feet out of the water.", "Sharks can have up to 30,000 teeth in their lifetime.", "The smallest shark is the dwarf lanternshark, only 8 inches long.", "Sharks play a vital role in the ocean ecosystem.", "Mako sharks are the fastest sharks, reaching 46 mph.", "Not all sharks live in salt water; some live in rivers.", "Sharks have a 'sixth sense' that detects electricity.", "A shark's liver is full of oil to help it float.", "Blue sharks are known for their beautiful blue color.", "Megalodon was an ancient shark three times bigger than a Great White.", "Sharks do not have vocal cords; they are silent hunters.", "Most sharks are cold-blooded, but a few are warm-blooded."];
 const CATCH_PHRASES = ["PALDOO!", "HULI!", "LAKING ISDA!", "KUHA!", "PANALO!", "SCORE!", "BINGO!"];
@@ -28,7 +28,7 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
   const { 
-    score, highScore, 
+    score, highScore, activeBackground,
     handleCatchPoints, resetScore, saveHighScore, convertScoreToCoins 
   } = useScore();
 
@@ -39,6 +39,7 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
     handleManualSelection, proceed
   } = useGameLogic(onBack);
 
+  const isUnderwaterEquipped = activeBackground === 'underwater_theme';
   const required = LEVEL_CONFIGS[currentLevel].requiredCatch;
 
   useEffect(() => {
@@ -75,6 +76,7 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
   };
 
   const getBg = () => {
+    if (isUnderwaterEquipped) return { backgroundColor: '#000814' };
     if (currentLevel === 2) return { backgroundColor: '#fb923c' };
     if (currentLevel === 3) return { backgroundColor: '#450a0a' };
     return { backgroundColor: '#001524' };
@@ -88,7 +90,23 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
 
   return (
     <View style={[styles.container, getBg()]}>
-      {currentLevel === 2 && <View style={styles.sun} />}
+      <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
+        {isUnderwaterEquipped ? (
+          <LottieView 
+            source={require('../../assets/gifs/Underwater Ocean Fish and Turtle.json')} 
+            autoPlay 
+            loop 
+            style={styles.fullScreenLottie}
+            resizeMode="cover"
+          />
+        ) : (
+          <>
+            {currentLevel === 2 && <View style={styles.sun} />}
+            <LottieView source={require('../../assets/gifs/Dolphin Jumping.json')} autoPlay loop style={styles.dolphin} />
+            <LottieView source={require('../../assets/gifs/sea waves.json')} autoPlay loop style={styles.waves} />
+          </>
+        )}
+      </View>
 
       <GameHeader 
         onBack={onBack} currentLevel={currentLevel} 
@@ -131,9 +149,6 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
             <Text style={styles.floatingText}>{floatingValue}</Text>
           </Animated.View>
         )}
-
-        <LottieView source={require('../../assets/gifs/Dolphin Jumping.json')} autoPlay loop style={styles.dolphin} />
-        <LottieView source={require('../../assets/gifs/sea waves.json')} autoPlay loop style={styles.waves} />
 
         <Animated.View style={[styles.visualContainer, { transform: [{ translateX: shakeAnim }] }]}>
           <View style={styles.visualArea}>
@@ -193,6 +208,7 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  fullScreenLottie: { width: width, height: screenHeight, opacity: 0.5 },
   sun: { position: 'absolute', top: 120, right: 40, width: 80, height: 80, borderRadius: 40, backgroundColor: '#fed7aa', opacity: 0.8 },
   gameArea: { flex: 1 },
   topContainerWrapper: { marginTop: 10, paddingHorizontal: 30, zIndex: 50 },
@@ -201,7 +217,7 @@ const styles = StyleSheet.create({
   miniStat: { alignItems: 'center', paddingHorizontal: 20 },
   miniDivider: { width: 1, height: 15, backgroundColor: 'rgba(255,255,255,0.15)' },
   miniLabel: { color: 'rgba(255,255,255,0.3)', fontSize: 9, fontWeight: '900', letterSpacing: 1.5, marginBottom: 2 },
-  miniValue: { color: '#fff', fontSize: 18, fontWeight: '300', fontFamily: 'System' },
+  miniValue: { color: '#fff', fontSize: 18, fontWeight: '300' },
   floatingIndicator: { position: 'absolute', top: '45%', left: width / 2 - 30, width: 60, height: 60, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 30, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' },
   floatingText: { color: '#fff', fontSize: 28, fontWeight: '900' },
   waves: { position: 'absolute', width: '100%', height: 300, bottom: -10 },

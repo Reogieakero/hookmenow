@@ -72,7 +72,7 @@ const LevelSelector = forwardRef(({ levels, onSelectionTriggered, disabled }, re
         />
       </View>
       {!disabled && (
-        <Text style={styles.hintText}>TAP ANYWHERE TO CAST</Text>
+        <Text style={styles.hintText}>TAP ANYWHERE TO DEPLOY HOOK</Text>
       )}
     </View>
   );
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   activeCard: { backgroundColor: 'rgba(255, 255, 255, 0.1)', borderColor: '#4ade80', borderWidth: 2 },
   levelText: { color: '#71717a', fontSize: 18, fontWeight: '400' },
   activeLevelText: { color: '#4ade80', fontWeight: '900' },
-  hintText: { color: '#3f3f46', fontSize: 9, fontWeight: '700', letterSpacing: 2, marginTop: 12 }
+  hintText: { color: '#ffffff', fontSize: 9, fontWeight: '700', letterSpacing: 2, marginTop: 12 }
 });
 
 export default LevelSelector;

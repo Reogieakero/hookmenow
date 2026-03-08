@@ -7,10 +7,11 @@ import { useScore } from '../hooks/useScore';
 
 const { width, height: screenHeight } = Dimensions.get('window');
 
-export default function HomeScreen({ onStart, isMuted, onToggleAudio }) {
+export default function HomeScreen({ onStart, isMuted, onToggleAudio, onOpenShop }) {
   const { line1, line2 } = useTypingAnimation("HOOK ME", "NOW", 300);
-  const { coins } = useScore();
+  const { coins, activeBackground } = useScore();
   const cursorOpacity = useRef(new Animated.Value(0)).current;
+  const isUnderwater = activeBackground === 'underwater_theme';
 
   useEffect(() => {
     Animated.loop(
@@ -22,12 +23,41 @@ export default function HomeScreen({ onStart, isMuted, onToggleAudio }) {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isUnderwater && { backgroundColor: '#000814' }]}>
+      <View style={StyleSheet.absoluteFillObject} pointerEvents="none">
+        {isUnderwater ? (
+          <LottieView
+            autoPlay
+            loop
+            style={styles.fullScreenLottie}
+            source={require('../../assets/gifs/Underwater Ocean Fish and Turtle.json')}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={styles.defaultWaveWrapper}>
+            <LottieView
+              autoPlay
+              loop
+              style={styles.dolphinAnimation}
+              source={require('../../assets/gifs/Dolphin Jumping.json')}
+            />
+            <LottieView
+              autoPlay
+              loop
+              style={styles.lottieWaves}
+              source={require('../../assets/gifs/sea waves.json')} 
+              speed={0.3}
+            />
+          </View>
+        )}
+      </View>
+
       <View style={styles.nav}>
-        <View style={styles.coinBadge}>
+        <TouchableOpacity style={styles.coinBadge} onPress={onOpenShop} activeOpacity={0.7}>
           <MaterialIcons name="monetization-on" size={18} color="#fbbf24" />
           <Text style={styles.coinText}>{coins.toLocaleString()}</Text>
-        </View>
+        </TouchableOpacity>
+
         <Pressable style={styles.iconButton} onPress={onToggleAudio}>
           <Ionicons 
             name={isMuted ? "volume-mute" : "volume-high"} 
@@ -67,39 +97,18 @@ export default function HomeScreen({ onStart, isMuted, onToggleAudio }) {
             <Text style={styles.legalText}>© 2026 DEEP SEA OPERATIONS</Text>
         </View>
       </View>
-
-      <View style={styles.waveContainer} pointerEvents="none">
-        <LottieView
-          autoPlay
-          loop
-          style={styles.dolphinAnimation}
-          source={require('../../assets/gifs/Dolphin Jumping.json')}
-        />
-        <LottieView
-          autoPlay
-          loop
-          style={styles.lottieWaves}
-          source={require('../../assets/gifs/sea waves.json')} 
-          speed={0.3}
-        />
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 28 },
-  nav: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 24, zIndex: 20 },
-  coinBadge: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    backgroundColor: 'rgba(251, 191, 36, 0.15)', 
-    paddingHorizontal: 14, 
-    paddingVertical: 8, 
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(251, 191, 36, 0.3)'
-  },
+  container: { flex: 1, paddingHorizontal: 28, backgroundColor: '#001524' },
+  fullScreenLottie: { width: width, height: screenHeight, opacity: 0.6 },
+  defaultWaveWrapper: { position: 'absolute', bottom: -290, left: 0, width: width, height: screenHeight * 1.2, opacity: 0.45, justifyContent: 'flex-end' },
+  lottieWaves: { width: width, height: '100%', transform: [{ scaleY: 1.2 }] },
+  dolphinAnimation: { width: width * 0.6, height: 200, position: 'absolute', top: '40%', left: '20%', zIndex: 2 },
+  nav: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 20, paddingBottom: 24, zIndex: 20 },
+  coinBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(251, 191, 36, 0.15)', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(251, 191, 36, 0.3)' },
   coinText: { color: '#fbbf24', fontSize: 16, fontWeight: '900', marginLeft: 6 },
   iconButton: { padding: 10, backgroundColor: 'rgba(24, 24, 27, 0.8)', borderRadius: 10, borderWidth: 1, borderColor: '#27272a' },
   main: { flex: 1, justifyContent: 'center', alignItems: 'flex-start', zIndex: 20 },
@@ -115,28 +124,5 @@ const styles = StyleSheet.create({
   primaryButton: { backgroundColor: '#fafafa', paddingVertical: 18, borderRadius: 12, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 8 },
   primaryButtonText: { color: '#09090b', fontSize: 16, fontWeight: '600' },
   legalContainer: { alignItems: 'center' },
-  legalText: { color: '#3f3f46', fontSize: 10, letterSpacing: 1, fontWeight: '600' },
-  waveContainer: {
-    position: 'absolute',
-    bottom: -290, 
-    left: 0,
-    width: width,
-    height: screenHeight * 1.2, 
-    zIndex: 1,
-    opacity: 0.45,
-    justifyContent: 'flex-end', 
-  },
-  lottieWaves: { 
-    width: width, 
-    height: '100%',
-    transform: [{ scaleY: 1.2 }], 
-  },
-  dolphinAnimation: {
-    width: width * 0.6,
-    height: 200,
-    position: 'absolute',
-    top: '40%',
-    left: '20%',
-    zIndex: 2,
-  }
+  legalText: { color: '#3f3f46', fontSize: 10, letterSpacing: 1, fontWeight: '600' }
 });
