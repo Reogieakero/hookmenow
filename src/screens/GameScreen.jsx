@@ -9,6 +9,7 @@ import CatchDialogue from '../components/CatchDialogue';
 import { useGameLogic, LEVEL_CONFIGS } from '../hooks/useGameLogic';
 
 const { width, height } = Dimensions.get('window');
+const ICON_SIZE = 50;
 
 const TRIVIA_LIST = [
   "Sharks have been around for more than 400 million years.",
@@ -46,13 +47,13 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
   const floatAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
-  // Initial position: Bottom Right
-  const pan = useRef(new Animated.ValueXY({ x: width - 80, y: height - 150 })).current;
+  // Initial position: Snap to the right side
+  const pan = useRef(new Animated.ValueXY({ x: width - ICON_SIZE - 20, y: height - 200 })).current;
 
   const panResponder = useRef(
     PanResponder.create({
-      // Only take control if the user moves more than 5 pixels (prevents blocking the tap)
       onMoveShouldSetPanResponder: (evt, gestureState) => {
+        // Threshold of 5 pixels to distinguish between tap and drag
         return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
       },
       onPanResponderGrant: () => {
@@ -65,8 +66,18 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
         [null, { dx: pan.x, dy: pan.y }],
         { useNativeDriver: false }
       ),
-      onPanResponderRelease: () => {
+      onPanResponderRelease: (e, gestureState) => {
         pan.flattenOffset();
+        
+        // Snap to Edge Logic
+        const endX = gestureState.moveX;
+        const snapTo = endX > width / 2 ? (width - ICON_SIZE - 20) : 20;
+
+        Animated.spring(pan.x, {
+          toValue: snapTo,
+          useNativeDriver: false,
+          friction: 5
+        }).start();
       },
     })
   ).current;
@@ -169,7 +180,7 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
         style={styles.gameArea} 
         onPress={() => !isManualMode && gameState === 'IDLE' && selectorRef.current?.handleStop()}
       >
-        {/* DRAGGABLE TRIVIA BUTTON */}
+        {/* DRAGGABLE TRIVIA BUTTON WITH SNAP */}
         <Animated.View 
           {...panResponder.panHandlers}
           style={[
@@ -247,44 +258,16 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
                     <View key={index} style={[styles.fisherColumn, { width: itemWidth }]}>
                       <Text style={[styles.fisherLabel, currentLevel === 2 && { color: '#fff' }]}>#{item.num}</Text>
                       <LottieView source={require('../../assets/gifs/humanfishing.json')} autoPlay loop style={styles.largeFisher} />
-                      {gameState === 'RESULT' && (
-                        <View style={styles.individualResultOverlay}>
-                          <LottieView 
-                            source={item.isShark ? require('../../assets/gifs/shark.json') : require('../../assets/gifs/smallfish.json')}
-                            autoPlay
-                            style={styles.miniAnim}
-                          />
-                          <Text style={[styles.miniStatus, {color: item.isShark ? '#ef4444' : (currentLevel === 2 ? '#fff' : '#4ade80')}]}>
-                            {item.isShark ? 'SHARK' : 'FISH'}
-                          </Text>
-                        </View>
-                      )}
                     </View>
                   );
                 })}
-              </View>
-            )}
-
-            {(gameState === 'RESULT' && multiOutcomes.length <= 1) && (
-              <View style={styles.outcomeOverlay}>
-                <View style={styles.singleResultContainer}>
-                  <Animated.Text style={[multiOutcomes[0]?.isShark ? styles.baitText : styles.goodCatchText, { opacity: fadeAnim }, !multiOutcomes[0]?.isShark && currentLevel === 2 && { color: '#fff' }]}>
-                    {multiOutcomes[0]?.isShark ? "BAIT!" : 'CATCH!'}
-                  </Animated.Text>
-                  <LottieView
-                    source={multiOutcomes[0]?.isShark ? require('../../assets/gifs/shark.json') : require('../../assets/gifs/smallfish.json')}
-                    autoPlay
-                    loop={!multiOutcomes[0]?.isShark}
-                    style={styles.outcomeAnim}
-                  />
-                </View>
               </View>
             )}
           </View>
         </Animated.View>
       </Pressable>
 
-      {/* MODALS */}
+      {/* TRIVIA MODAL */}
       <Modal visible={randomTriviaVisible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { borderColor: '#4ade80', borderLeftWidth: 4 }]}>
@@ -300,20 +283,6 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
       </Modal>
 
       <MechanicsModal visible={showMechanics} onClose={() => setShowMechanics(false)} stage={currentLevel} description={currentMechanics} />
-
-      <Modal visible={audioAlertVisible} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>AUDIO ACTIVE</Text>
-            <View style={styles.triviaBox}>
-              <Text style={styles.triviaText}>The PILIEMON frequency is already active.</Text>
-            </View>
-            <TouchableOpacity style={styles.actionBtn} onPress={() => setAudioAlertVisible(false)}>
-              <Text style={styles.btnText}>ACKNOWLEDGE</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
 
       <Modal visible={showModal} transparent animationType="slide">
         <View style={styles.modalOverlay}>
@@ -340,12 +309,11 @@ export default function GameScreen({ onBack, isMusicPlaying, onToggleMusic }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  sun: { position: 'absolute', top: 120, right: 40, width: 80, height: 80, borderRadius: 40, backgroundColor: '#fed7aa', opacity: 0.8, shadowColor: '#fb923c', shadowRadius: 20, shadowOpacity: 1, elevation: 10 },
+  sun: { position: 'absolute', top: 120, right: 40, width: 80, height: 80, borderRadius: 40, backgroundColor: '#fed7aa', opacity: 0.8, elevation: 10 },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 25, paddingTop: 20, paddingBottom: 20, zIndex: 10, justifyContent: 'space-between' },
   backButton: { padding: 4 },
   headerIconButton: { padding: 5 },
-  // Updated Styles for Draggable Button
-  floatingTriviaBtn: { position: 'absolute', width: 50, height: 50, borderRadius: 25, backgroundColor: 'rgba(74, 222, 128, 0.1)', borderWidth: 1, borderColor: '#4ade80', zIndex: 999, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.3, shadowRadius: 4, elevation: 5 },
+  floatingTriviaBtn: { position: 'absolute', width: ICON_SIZE, height: ICON_SIZE, borderRadius: ICON_SIZE / 2, backgroundColor: 'rgba(74, 222, 128, 0.1)', borderWidth: 1, borderColor: '#4ade80', zIndex: 999, elevation: 5 },
   fullTouch: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
   modeToggle: { borderWidth: 1, borderColor: '#4ade80', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4 },
   modeToggleText: { color: '#4ade80', fontSize: 10, fontWeight: 'bold' },
@@ -377,14 +345,6 @@ const styles = StyleSheet.create({
   fisherColumn: { alignItems: 'center', marginVertical: 5, position: 'relative' },
   fisherLabel: { color: '#4ade80', fontSize: 10, fontWeight: 'bold', marginBottom: -10 },
   largeFisher: { width: 180, height: 180 },
-  individualResultOverlay: { position: 'absolute', top: -10, alignItems: 'center', justifyContent: 'center', width: '100%' },
-  miniAnim: { width: 85, height: 85 },
-  miniStatus: { fontSize: 10, fontWeight: '900', marginTop: -15, textShadowColor: '#000', textShadowRadius: 3 },
-  outcomeOverlay: { position: 'absolute', bottom: 100, width: '100%', zIndex: 5, alignItems: 'center' },
-  singleResultContainer: { alignItems: 'center' },
-  goodCatchText: { color: '#4ade80', fontSize: 32, fontWeight: '900', marginBottom: -40, zIndex: 6, textShadowColor: '#000', textShadowRadius: 4 },
-  baitText: { color: '#ef4444', fontSize: 24, fontWeight: '900', marginBottom: -40, zIndex: 6, textShadowColor: '#000', textShadowRadius: 4 },
-  outcomeAnim: { width: 300, height: 300 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0, 21, 36, 0.98)', justifyContent: 'center', alignItems: 'center', padding: 30 },
   modalContent: { width: '100%', backgroundColor: '#022c43', padding: 30, borderLeftWidth: 4, borderColor: '#ef4444' },
   winBorder: { borderColor: '#FFECD1' },
