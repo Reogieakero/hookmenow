@@ -8,11 +8,10 @@ import { useGameAudio } from './src/hooks/useAudio';
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('HOME');
   
-  // Use the updated hook
-  const { isMuted, toggleMusic, playEffect } = useGameAudio(require('./assets/sounds/game.mp3'));
+  // Update the path here to use pilemon.mp3
+  const { isMuted, toggleMusic, playEffect } = useGameAudio(require('./assets/sounds/pilemon.mp3'));
 
   const handleStartGame = () => {
-    // We only play a sound effect if the user already enabled sound
     playEffect(); 
     setCurrentScreen('GAME');
   };
@@ -31,7 +30,11 @@ export default function App() {
             onToggleAudio={toggleMusic} 
           />
         ) : (
-          <GameScreen onBack={handleGoHome} />
+          <GameScreen 
+            onBack={handleGoHome} 
+            isMusicPlaying={!isMuted}
+            onToggleMusic={toggleMusic}
+          />
         )}
       </SafeAreaView>
     </SafeAreaProvider>
