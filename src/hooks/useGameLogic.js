@@ -3,7 +3,7 @@ import { Animated } from 'react-native';
 
 export const LEVEL_CONFIGS = {
   1: { sharkCount: 2, totalPool: 10, requiredCatch: 5, description: "Calm waters. Exactly 2 sharks are hiding. Catch 5 fish to proceed." },
-  2: { sharkWeight: 3, fishWeight: 7, requiredCatch: 6, description: "Choppy seas. Sharks are getting curious. Catch 6 fish." },
+  2: { sharkCount: 2, totalPool: 10, requiredCatch: 6, description: "Choppy seas. Still 2 sharks, but you need more fish. Catch 6 fish." },
   3: { sharkWeight: 5, fishWeight: 5, requiredCatch: 3, description: "DANGER ZONE! 5 Sharks in the water. Catch 3 fish to survive." },
 };
 
@@ -25,7 +25,7 @@ export function useGameLogic(onBack) {
   const [currentLevel, setCurrentLevel] = useState(1);
   const [catchCount, setCatchCount] = useState(0);
   const [availableNumbers, setAvailableNumbers] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-  const [levelOneMap, setLevelOneMap] = useState({});
+  const [fixedSharkMap, setFixedSharkMap] = useState({});
   const [selectedSet, setSelectedSet] = useState([]);
   const [isManualMode, setIsManualMode] = useState(false);
   const [gameState, setGameState] = useState('IDLE');
@@ -39,10 +39,11 @@ export function useGameLogic(onBack) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (currentLevel === 1) {
+    if (currentLevel === 1 || currentLevel === 2) {
+      const config = LEVEL_CONFIGS[currentLevel];
       const pool = new Array(10).fill(false);
       let sharksPlaced = 0;
-      while (sharksPlaced < 2) {
+      while (sharksPlaced < config.sharkCount) {
         let randIdx = Math.floor(Math.random() * 10);
         if (!pool[randIdx]) {
           pool[randIdx] = true;
@@ -53,7 +54,7 @@ export function useGameLogic(onBack) {
       [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach((num, index) => {
         mapping[num] = pool[index];
       });
-      setLevelOneMap(mapping);
+      setFixedSharkMap(mapping);
     }
   }, [currentLevel]);
 
@@ -90,8 +91,8 @@ export function useGameLogic(onBack) {
     
     const results = pickedNumbers.map(num => {
       let isShark = false;
-      if (currentLevel === 1) {
-        isShark = levelOneMap[num];
+      if (currentLevel === 1 || currentLevel === 2) {
+        isShark = fixedSharkMap[num];
       } else {
         isShark = (Math.floor(Math.random() * 10) + 1) <= config.sharkWeight;
       }
